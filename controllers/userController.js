@@ -113,10 +113,12 @@ module.exports = {
       );
 
       if (!userFriend) {
-        return res.status(404).json({ message: "No friend with this user!" });
+        return res
+          .status(404)
+          .json({ message: 'No friend with this user!' });
       }
 
-      res.json(userFriend);
+      res.json({ message: 'Friend successfully removed!' });
     } catch (err) {
       res.status(500).json(err);
     }
