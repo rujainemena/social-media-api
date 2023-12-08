@@ -44,7 +44,7 @@ module.exports = {
       );
 
       if (!userInfo) {
-        return res.status(404).json({ message: 'No user with this id!' });
+        return res.status(404).json({ message: "No user with this id!" });
       }
 
       res.json(userInfo);
@@ -56,10 +56,14 @@ module.exports = {
   // delete user and user thoughts
   async deleteUser(req, res) {
     try {
-      const thought = await Thought.findOneAndRemove({ username: req.body.username });
+      const thought = await Thought.findOneAndRemove({
+        username: req.body.username,
+      });
 
       if (!thought) {
-        return res.status(404).json({ message: 'No thought with this username!' });
+        return res
+          .status(404)
+          .json({ message: "No thought with this username!" });
       }
 
       const user = await User.findOneAndRemove(
@@ -70,12 +74,51 @@ module.exports = {
       if (!user) {
         return res
           .status(404)
-          .json({ message: 'Thought created but no user with this id!' });
+          .json({ message: "Thought created but no user with this id!" });
       }
 
-      res.json({ message: 'User successfully deleted!' });
+      res.json({ message: "User successfully deleted!" });
     } catch (err) {
       res.status(500).json(err);
     }
   },
-}
+  // add new friend
+  async addFriend(req, res) {
+    try {
+      const friend = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { friends: req.params.friendId } },
+        { new: true }
+      );
+
+      if (!friend) {
+        return res.status(404).json({
+          message: "Friend added, but found no user with that ID",
+        });
+      }
+
+      res.json("Added friend 🎉");
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  },
+  // delete friend
+  async removeFriend(req, res) {
+    try {
+      const userFriend = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: { friends: req.params.friendId } } },
+        { new: true }
+      );
+
+      if (!userFriend) {
+        return res.status(404).json({ message: "No friend with this user!" });
+      }
+
+      res.json(userFriend);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+};
