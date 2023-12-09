@@ -57,13 +57,13 @@ module.exports = {
   async deleteUser(req, res) {
     try {
       const thought = await Thought.findOneAndRemove({
-        username: req.body.username,
+        _id: req.params.thoughtId,
       });
 
       if (!thought) {
         return res
           .status(404)
-          .json({ message: "No thought with this username!" });
+          .json({ message: "No thought with this id!" });
       }
 
       const user = await User.findOneAndRemove(
