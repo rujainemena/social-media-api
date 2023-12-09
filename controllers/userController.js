@@ -4,7 +4,7 @@ const Thought = require("../models/Thought");
 module.exports = {
   async getUsers(req, res) {
     try {
-      const users = await User.find().populate("thoughts");
+      const users = await User.find();
       res.json(users);
     } catch (err) {
       res.status(500).json(err);
@@ -12,7 +12,7 @@ module.exports = {
   },
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId }).populate("thoughts").select(
+      const user = await User.findOne({ _id: req.params.userId }).select(
         "-__v"
       );
 
@@ -56,15 +56,15 @@ module.exports = {
   // delete user and user thoughts
   async deleteUser(req, res) {
     try {
-      // const thought = await Thought.findOneAndRemove({
-      //   username: req.body.username,
-      // });
+      const thought = await Thought.findOneAndRemove({
+        username: req.body.username,
+      });
 
-      // if (!thought) {
-      //   return res
-      //     .status(404)
-      //     .json({ message: "No thought with this username!" });
-      // }
+      if (!thought) {
+        return res
+          .status(404)
+          .json({ message: "No thought with this username!" });
+      }
 
       const user = await User.findOneAndRemove(
         { _id: req.params.userId },
